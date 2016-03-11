@@ -33,13 +33,15 @@ public class UsersActivity extends BaseActivity {
     private List<UserWithSource> users = new ArrayList<>();
     private SwipeRefreshLayout srl_users;
 
-    @Override protected void onCreate(Bundle savedInstanceState) {
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.users_activity);
         setUpRecyclerView();
     }
 
     private boolean isLoading;
+
     private void setUpRecyclerView() {
         usersAdapter = new UsersAdapter();
 
@@ -48,15 +50,18 @@ public class UsersActivity extends BaseActivity {
         rv_users.setLayoutManager(new GridLayoutManager(this, 2));
 
         Paginate.Callbacks callbacks = new Paginate.Callbacks() {
-            @Override public void onLoadMore() {
+            @Override
+            public void onLoadMore() {
                 requestUsers(false);
             }
 
-            @Override public boolean isLoading() {
+            @Override
+            public boolean isLoading() {
                 return isLoading;
             }
 
-            @Override public boolean hasLoadedAllItems() {
+            @Override
+            public boolean hasLoadedAllItems() {
                 return false;
             }
         };
@@ -67,7 +72,8 @@ public class UsersActivity extends BaseActivity {
 
         srl_users = (SwipeRefreshLayout) findViewById(R.id.srl_users);
         srl_users.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
-            @Override public void onRefresh() {
+            @Override
+            public void onRefresh() {
                 requestUsers(true);
             }
         });
@@ -77,16 +83,27 @@ public class UsersActivity extends BaseActivity {
         isLoading = true;
 
         int lastUserId = 1;
-        if (!users.isEmpty()) lastUserId = users.get(users.size()-1).getUser().getId();
-        if (pullToRefresh) lastUserId = 1;
+        if (!users.isEmpty()) {
+            lastUserId = users.get(users.size() - 1).getUser().getId();
+        }
+        if (pullToRefresh) {
+            lastUserId = 1;
+        }
 
+        /**
+         * read more about
+         * @link http://stackoverflow.com/questions/31276164/rxjava-schedulers-use-cases
+         */
         subscription.unsubscribe();
         subscription = getRepository().getUsers(lastUserId, pullToRefresh)
-                .subscribeOn(Schedulers.newThread())
+                .subscribeOn(Schedulers.computation())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new Action1<Reply<List<User>>>() {
-                    @Override public void call(Reply<List<User>> reply) {
-                        if (pullToRefresh) users.clear();
+                    @Override
+                    public void call(Reply<List<User>> reply) {
+                        if (pullToRefresh) {
+                            users.clear();
+                        }
 
                         for (User user : reply.getData()) {
                             users.add(new UserWithSource(user, reply.getSource().name()));
@@ -101,13 +118,15 @@ public class UsersActivity extends BaseActivity {
 
     public class UsersAdapter extends RecyclerView.Adapter<UsersAdapter.ViewHolder> {
 
-        @Override public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+        @Override
+        public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
             View view = LayoutInflater.from(parent.getContext())
                     .inflate(R.layout.user_view, parent, false);
             return new ViewHolder(view);
         }
 
-        @Override public void onBindViewHolder(ViewHolder holder, int position) {
+        @Override
+        public void onBindViewHolder(ViewHolder holder, int position) {
             final UserWithSource userWithSource = users.get(position);
             holder.tv_name.setText(userWithSource.getUser().getLogin());
             holder.tv_source.setText(userWithSource.getSource());
@@ -118,14 +137,16 @@ public class UsersActivity extends BaseActivity {
                     .into(holder.iv_avatar);
 
             holder.root.setOnClickListener(new View.OnClickListener() {
-                @Override public void onClick(View v) {
+                @Override
+                public void onClick(View v) {
                     ReposUserActivity.selectedUser = userWithSource.getUser();
                     startActivity(new Intent(UsersActivity.this, ReposUserActivity.class));
                 }
             });
         }
 
-        @Override public int getItemCount() {
+        @Override
+        public int getItemCount() {
             return users.size();
         }
 

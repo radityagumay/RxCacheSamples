@@ -18,16 +18,18 @@ public class BaseActivity extends AppCompatActivity {
     protected Subscription subscription = Subscriptions.empty();
 
     protected Repository getRepository() {
-        return ((SampleAndroidApp)getApplication()).getRepository();
+        return ((SampleAndroidApp) getApplication()).getRepository();
     }
 
-    @Override public boolean onCreateOptionsMenu(Menu menu) {
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater inflater = getMenuInflater();
         inflater.inflate(R.menu.menu_recreate_activity, menu);
         return super.onCreateOptionsMenu(menu);
     }
 
-    @Override public boolean onOptionsItemSelected(MenuItem item) {
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
         if (item.getItemId() == R.id.action_recreate_activity) {
             recreate();
             return true;
@@ -39,7 +41,8 @@ public class BaseActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
-    @Override protected void onPause() {
+    @Override
+    protected void onPause() {
         super.onPause();
         subscription.unsubscribe();
     }
