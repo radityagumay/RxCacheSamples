@@ -94,6 +94,9 @@ public class UsersActivity extends BaseActivity {
          * read more about
          * @link http://stackoverflow.com/questions/31276164/rxjava-schedulers-use-cases
          */
+
+        // HELLO AMEND
+        // COBA AMEND
         subscription.unsubscribe();
         subscription = getRepository().getUsers(lastUserId, pullToRefresh)
                 .subscribeOn(Schedulers.computation())
