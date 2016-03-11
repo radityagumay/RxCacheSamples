@@ -97,6 +97,9 @@ public class UsersActivity extends BaseActivity {
 
         // HELLO AMEND
         // COBA AMEND
+        // TEST AMEND
+        // LATEST AMEND
+        // AMEND
         subscription.unsubscribe();
         subscription = getRepository().getUsers(lastUserId, pullToRefresh)
                 .subscribeOn(Schedulers.computation())
